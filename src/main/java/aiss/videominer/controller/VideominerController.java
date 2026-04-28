@@ -1,25 +1,21 @@
 package aiss.videominer.controller;
+
 import aiss.videominer.model.Caption;
 import aiss.videominer.model.Channel;
 import aiss.videominer.model.Comment;
 import aiss.videominer.model.Video;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import aiss.videominer.model.*;
 import aiss.videominer.repository.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.List;
-
-
 
 @RestController
 @RequestMapping("/videominer/api")
@@ -41,10 +37,27 @@ public class VideominerController {
     // Operaciones para CHANNELS
     // ---------------------------------------------------------
 
-    // Listar todos los canales
+    // Listar todos los canales (con paginación, filtrado por nombre y ordenación)
     @GetMapping("/channels")
-    public List<Channel> findAllChannels() {
-        return channelRepository.findAll();
+    public List<Channel> findAllChannels(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String order) {
+
+        Pageable paging;
+        if (order != null) {
+            if (order.startsWith("-"))
+                paging = PageRequest.of(page, size, Sort.by(order.substring(1)).descending());
+            else
+                paging = PageRequest.of(page, size, Sort.by(order).ascending());
+        } else {
+            paging = PageRequest.of(page, size);
+        }
+
+        if (name != null)
+            return channelRepository.findByName(name, paging).getContent();
+        return channelRepository.findAll(paging).getContent();
     }
 
     // Buscar un canal por ID
@@ -61,14 +74,55 @@ public class VideominerController {
         return channelRepository.save(channel);
     }
 
+    // PUT - Actualizar canal
+    @PutMapping("/channels/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateChannel(@PathVariable String id, @Valid @RequestBody Channel channel) {
+        Channel existingChannel = channelRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Canal no encontrado"));
+        existingChannel.setName(channel.getName());
+        existingChannel.setDescription(channel.getDescription());
+        existingChannel.setCreatedTime(channel.getCreatedTime());
+        existingChannel.setVideos(channel.getVideos());
+        channelRepository.save(existingChannel);
+    }
+
+    // DELETE - Eliminar canal
+    @DeleteMapping("/channels/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteChannel(@PathVariable String id) {
+        if (channelRepository.existsById(id)) {
+            channelRepository.deleteById(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Canal no encontrado");
+        }
+    }
+
     // ---------------------------------------------------------
     // Operaciones para VIDEOS
     // ---------------------------------------------------------
 
-    // Listar todos los vídeos
+    // Listar todos los vídeos (con paginación, filtrado por nombre y ordenación)
     @GetMapping("/videos")
-    public List<Video> findAllVideos() {
-        return videoRepository.findAll();
+    public List<Video> findAllVideos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String order) {
+
+        Pageable paging;
+        if (order != null) {
+            if (order.startsWith("-"))
+                paging = PageRequest.of(page, size, Sort.by(order.substring(1)).descending());
+            else
+                paging = PageRequest.of(page, size, Sort.by(order).ascending());
+        } else {
+            paging = PageRequest.of(page, size);
+        }
+
+        if (name != null)
+            return videoRepository.findByName(name, paging).getContent();
+        return videoRepository.findAll(paging).getContent();
     }
 
     // Buscar vídeo por ID
@@ -82,10 +136,27 @@ public class VideominerController {
     // Operaciones para COMMENTS
     // ---------------------------------------------------------
 
-    // Listar todos los comentarios
+    // Listar todos los comentarios (con paginación, filtrado por texto y ordenación)
     @GetMapping("/comments")
-    public List<Comment> findAllComments() {
-        return commentRepository.findAll();
+    public List<Comment> findAllComments(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String text,
+            @RequestParam(required = false) String order) {
+
+        Pageable paging;
+        if (order != null) {
+            if (order.startsWith("-"))
+                paging = PageRequest.of(page, size, Sort.by(order.substring(1)).descending());
+            else
+                paging = PageRequest.of(page, size, Sort.by(order).ascending());
+        } else {
+            paging = PageRequest.of(page, size);
+        }
+
+        if (text != null)
+            return commentRepository.findByText(text, paging).getContent();
+        return commentRepository.findAll(paging).getContent();
     }
 
     // Buscar comentario por ID
@@ -107,10 +178,27 @@ public class VideominerController {
     // Operaciones para CAPTIONS
     // ---------------------------------------------------------
 
-    // Listar todas las captions
+    // Listar todas las captions (con paginación, filtrado por idioma y ordenación)
     @GetMapping("/captions")
-    public List<Caption> findAllCaptions() {
-        return captionRepository.findAll();
+    public List<Caption> findAllCaptions(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String language,
+            @RequestParam(required = false) String order) {
+
+        Pageable paging;
+        if (order != null) {
+            if (order.startsWith("-"))
+                paging = PageRequest.of(page, size, Sort.by(order.substring(1)).descending());
+            else
+                paging = PageRequest.of(page, size, Sort.by(order).ascending());
+        } else {
+            paging = PageRequest.of(page, size);
+        }
+
+        if (language != null)
+            return captionRepository.findByLanguage(language, paging).getContent();
+        return captionRepository.findAll(paging).getContent();
     }
 
     // Buscar caption por ID
@@ -120,6 +208,7 @@ public class VideominerController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Caption no encontrada"));
     }
 
+    // Devolver las captions de un vídeo dado su id
     @GetMapping("/videos/{videoId}/captions")
     public List<Caption> findCaptionsByVideo(@PathVariable String videoId) {
         Video video = videoRepository.findById(videoId)
