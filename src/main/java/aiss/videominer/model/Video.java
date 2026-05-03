@@ -1,11 +1,18 @@
 package aiss.videominer.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 
 /**
  * @author Juan C. Alonso
@@ -111,5 +118,15 @@ public class Video {
                 ", comments=" + comments +
                 ", captions=" + captions +
                 '}';
+    }
+
+    public Video(String id, String name, String description, String releaseTime, User author, List<Comment> comments, List<Caption> captions) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseTime = releaseTime;
+        this.author = author;
+        this.comments = comments;
+        this.captions = captions;
     }
 }

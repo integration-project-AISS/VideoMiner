@@ -1,8 +1,11 @@
 package aiss.videominer.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * @author Juan C. Alonso
@@ -54,5 +57,11 @@ public class Comment {
                 ", text='" + text + '\'' +
                 ", createdOn='" + createdOn + '\'' +
                 '}';
+    }
+
+    public Comment(String id, String text, String createdOn) {
+        this.id = id;
+        this.text = text;
+        this.createdOn = createdOn;
     }
 }

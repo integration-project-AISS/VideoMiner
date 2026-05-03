@@ -1,7 +1,12 @@
 package aiss.videominer.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * @author Juan C. Alonso
@@ -64,6 +69,12 @@ public class User {
                 ", user_link='" + user_link + '\'' +
                 ", picture_link='" + picture_link + '\'' +
                 '}';
+    }
+
+    public User(String name, String user_link, String picture_link) {
+        this.name = name;
+        this.user_link = user_link;
+        this.picture_link = picture_link;
     }
 
 }
