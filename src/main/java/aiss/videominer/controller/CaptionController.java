@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,8 +34,15 @@ public class CaptionController {
     private VideoRepository videoRepository;
 
     // GET http://localhost:8080/api/captions
-    @GetMapping("/captions")
-    public List<Caption> findAll() {
+    @GetMapping
+    public List<Caption> findAll(
+        @RequestParam(required = false) String language
+    ) {
+
+        if (language != null) {
+            return captionRepository.findByLanguage(language);
+        }
+
         return captionRepository.findAll();
     }
 

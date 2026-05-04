@@ -21,6 +21,9 @@ import jakarta.validation.constraints.NotEmpty;
 @Table(name = "Video")
 public class Video {
 
+    public Video() {
+    }
+
     @Id
     @JsonProperty("id")
     private String id;

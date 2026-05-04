@@ -13,6 +13,9 @@ import jakarta.persistence.Table;
 @Table(name = "Caption")
 public class Caption {
 
+    public Caption() {
+    }
+
     @Id
     @JsonProperty("id")
     private String id;

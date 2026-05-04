@@ -15,6 +15,9 @@ import jakarta.persistence.Table;
 @Table(name = "VMUser")
 public class User {
 
+    public User() {
+    }
+
     @Id
     @JsonProperty("id")
     @GeneratedValue(strategy = GenerationType.AUTO)
