@@ -4,9 +4,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -22,46 +23,48 @@ import jakarta.validation.Valid;
 public class VideoController {
 
     @Autowired
-    VideoRepository repository;
+    private VideoRepository videoRepository;
 
     // GET http://localhost:8080/api/videos
-    // Devuelve todos los vídeos
-
     @GetMapping
     public List<Video> findAll() {
-        return repository.findAll();
+        return videoRepository.findAll();
     }
 
-    // GET http://localhost:8080/api/videos/{id}
-    // Devuelve un vídeo por id
-
-    @GetMapping("/{id}")
-    public Video findOne(@PathVariable String id) {
-
-        return repository.findById(id)
-                .orElseThrow(() ->
-                        new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Video not found"));
+    // GET http://localhost:8080/api/videos/{videoId}
+    @GetMapping("/{videoId}")
+    public Video findOne(@PathVariable String videoId) {
+        return videoRepository.findById(videoId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Video not found"));
     }
 
-    // POST http://localhost:8080/api/videos
-    // Crea un vídeo nuevo
+    // PUT http://localhost:8080/api/videos/{videoId}
+    @PutMapping("/{videoId}")
+    public Video update(@PathVariable String videoId,
+                        @Valid @RequestBody Video videoData) {
 
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    public Video create(@Valid @RequestBody Video video) {
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Video not found"));
 
-        return repository.save(
-                new Video(
-                        video.getId(),
-                        video.getName(),
-                        video.getDescription(),
-                        video.getReleaseTime(),
-                        video.getAuthor(),
-                        video.getComments(),
-                        video.getCaptions()
-                )
-        );
+        video.setName(videoData.getName());
+        video.setDescription(videoData.getDescription());
+        video.setReleaseTime(videoData.getReleaseTime());
+        video.setAuthor(videoData.getAuthor());
+        video.setComments(videoData.getComments());
+        video.setCaptions(videoData.getCaptions());
+
+        return videoRepository.save(video);
+    }
+
+    // DELETE http://localhost:8080/api/videos/{videoId}
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{videoId}")
+    public void delete(@PathVariable String videoId) {
+        if (!videoRepository.existsById(videoId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Video not found");
+        }
+        videoRepository.deleteById(videoId);
     }
 }

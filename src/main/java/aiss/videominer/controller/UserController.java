@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -22,42 +24,52 @@ import jakarta.validation.Valid;
 public class UserController {
 
     @Autowired
-    UserRepository repository;
+    private UserRepository userRepository;
 
     // GET http://localhost:8080/api/users
-    // Devuelve todos los usuarios
-
     @GetMapping
     public List<User> findAll() {
-        return repository.findAll();
+        return userRepository.findAll();
     }
 
-    // GET http://localhost:8080/api/users/{id}
-    // Devuelve un usuario por id
-
-    @GetMapping("/{id}")
-    public User findOne(@PathVariable Long id) {
-
-        return repository.findById(id)
-                .orElseThrow(() ->
-                        new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "User not found"));
+    // GET http://localhost:8080/api/users/{userId}
+    @GetMapping("/{userId}")
+    public User findOne(@PathVariable Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User not found"));
     }
 
     // POST http://localhost:8080/api/users
-    // Crea un usuario nuevo
-
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public User create(@Valid @RequestBody User user) {
+        return userRepository.save(user);
+    }
 
-        return repository.save(
-                new User(
-                        user.getName(),
-                        user.getUser_link(),
-                        user.getPicture_link()
-                )
-        );
+    // PUT http://localhost:8080/api/users/{userId}
+    @PutMapping("/{userId}")
+    public User update(@PathVariable Long userId,
+                       @Valid @RequestBody User userData) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User not found"));
+
+        user.setName(userData.getName());
+        user.setUser_link(userData.getUser_link());
+        user.setPicture_link(userData.getPicture_link());
+
+        return userRepository.save(user);
+    }
+
+    // DELETE http://localhost:8080/api/users/{userId}
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{userId}")
+    public void delete(@PathVariable Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+        userRepository.deleteById(userId);
     }
 }
