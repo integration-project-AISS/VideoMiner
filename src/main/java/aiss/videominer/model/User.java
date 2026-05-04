@@ -71,6 +71,9 @@ public class User {
                 '}';
     }
 
+    public User() {
+    }
+
     public User(String name, String user_link, String picture_link) {
         this.name = name;
         this.user_link = user_link;

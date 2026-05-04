@@ -59,6 +59,9 @@ public class Comment {
                 '}';
     }
 
+    public Comment() {
+    }
+
     public Comment(String id, String text, String createdOn) {
         this.id = id;
         this.text = text;

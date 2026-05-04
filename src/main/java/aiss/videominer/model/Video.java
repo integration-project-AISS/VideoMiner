@@ -50,7 +50,8 @@ public class Video {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "videoId")
     private List<Caption> captions;
-
+    public Video() {
+    }
     public String getId() {
         return id;
     }
