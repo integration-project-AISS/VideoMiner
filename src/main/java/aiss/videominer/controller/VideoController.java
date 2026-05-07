@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import aiss.videominer.model.Caption;
+import aiss.videominer.model.Comment;
 import aiss.videominer.model.Video;
 import aiss.videominer.repository.VideoRepository;
 import jakarta.validation.Valid;
@@ -43,6 +45,44 @@ public class VideoController {
                         new ResponseStatusException(
                                 HttpStatus.NOT_FOUND,
                                 "Video not found"));
+    }
+
+    // GET http://localhost:8080/api/videos/{id}/comments
+    // Devuelve los comentarios de un vídeo por id
+
+    @GetMapping("/{videoId}/comments")
+    public List<Comment> findCommentsByVideo(
+            @PathVariable String videoId
+    ) {
+
+        Video video = repository.findById(videoId)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Video not found"
+                        )
+                );
+
+        return video.getComments();
+    }
+
+    // GET GET http://localhost:8080/api/videos/{id}/captions
+    // Devuelve los subtítulos de un vídeo por id
+
+    @GetMapping("/{videoId}/captions")
+    public List<Caption> findCaptionsByVideo(
+            @PathVariable String videoId
+    ) {
+
+        Video video = repository.findById(videoId)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Video not found"
+                        )
+                );
+
+        return video.getCaptions();
     }
 
     // POST http://localhost:8080/api/videos
