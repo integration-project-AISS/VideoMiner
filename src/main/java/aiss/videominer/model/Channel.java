@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import io.swagger.v3.oas.annotations.media.Schema; 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,30 +19,36 @@ import jakarta.validation.constraints.NotNull;
 /**
  * @author Juan C. Alonso
  */
+@Schema(description = "Información del canal de contenido multimedia")
 @Entity
 @Table(name = "Channel")
 public class Channel {
 
     @Id
     @JsonProperty("id")
+    @Schema(description = "Identificador único del canal", example = "UC-lHJZR3Gqxm24_Vd_AJ5Yw") // Documenta el campo
     private String id;
 
     @JsonProperty("name")
     @NotEmpty(message = "Channel name cannot be empty")
+    @Schema(description = "Nombre oficial del canal", example = "Universidad de Sevilla")
     private String name;
 
     @JsonProperty("description")
     @Column(columnDefinition="TEXT")
+    @Schema(description = "Descripción proporcionada por la plataforma de origen")
     private String description;
 
     @JsonProperty("createdTime")
     @NotEmpty(message = "Channel creation time cannot be empty")
+    @Schema(description = "Fecha de creación del canal", example = "2023-01-01T00:00:00Z")
     private String createdTime;
 
     @JsonProperty("videos")
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "channelId")
     @NotNull(message = "Channel videos cannot be null")
+    @Schema(description = "Colección de vídeos asociados a este canal")
     private List<Video> videos;
 
     public Channel() {

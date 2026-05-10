@@ -2,6 +2,7 @@ package aiss.videominer.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import io.swagger.v3.oas.annotations.media.Schema; 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -10,19 +11,23 @@ import jakarta.persistence.Table;
 /**
  * @author Juan C. Alonso
  */
+@Schema(description = "Comentario o etiqueta asociada a un contenido multimedia")
 @Entity
 @Table(name = "Comment")
 public class Comment {
 
     @Id
     @JsonProperty("id")
+    @Schema(description = "Identificador del comentario o tag")
     private String id;
 
     @JsonProperty("text")
     @Column(columnDefinition="TEXT")
+    @Schema(description = "Contenido textual del comentario o nombre del tag", example = "¡Excelente explicación!")
     private String text;
 
     @JsonProperty("createdOn")
+    @Schema(description = "Fecha de creación del comentario o tag", example = "2023-01-01T00:00:00Z")
     private String createdOn;
 
     public String getId() {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import io.swagger.v3.oas.annotations.media.Schema; 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,38 +18,46 @@ import jakarta.validation.constraints.NotEmpty;
 /**
  * @author Juan C. Alonso
  */
+@Schema(description = "Detalles técnicos y metadatos de un vídeo específico")
 @Entity
 @Table(name = "Video")
 public class Video {
 
     @Id
     @JsonProperty("id")
+    @Schema(description = "Identificador único del vídeo", example = "dQw4w9WgXcQ")
     private String id;
 
     @JsonProperty("name")
     @NotEmpty(message = "Video name cannot be empty")
+    @Schema(description = "Título del vídeo", example = "Rick Astley - Never Gonna Give You Up (Video)")
     private String name;
 
     @JsonProperty("description")
     @Column(columnDefinition="TEXT")
+    @Schema(description = "Descripción del vídeo", example = "Video explicativo sobre el tema de Java")
     private String description;
 
     @JsonProperty("releaseTime")
     @NotEmpty(message = "Video release time cannot be empty")
+    @Schema(description = "Fecha de lanzamiento del vídeo", example = "2023-01-01T00:00:00Z")
     private String releaseTime;
 
     @JsonProperty("user")
     @OneToOne(cascade = CascadeType.ALL)
+    @Schema(description = "Información del autor del vídeo", example = "Juan C. Alonso")
     private User author;
 
     @JsonProperty("comments")
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "videoId")
+    @Schema(description = "Comentarios asociados a este vídeo")
     private List<Comment> comments;
 
     @JsonProperty("captions")
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "videoId")
+    @Schema(description = "Subtítulos asociados a este vídeo")
     private List<Caption> captions;
     public Video() {
     }
